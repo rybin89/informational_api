@@ -1,0 +1,9 @@
+Flask
+peewee
+PyMySQL
+Flask-JWT-Extended
+bcrypt
+python-dotenv
+marshmallow
+marshmallow-peewee
+Flask-CORS

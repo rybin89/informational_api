@@ -6,7 +6,7 @@ from app.Models.Users import User
 
 
 class Comment(Base):
-    id = IntegerField(primary_key=True)
+    id = PrimaryKeyField()
     content = TextField()
     author = ForeignKeyField(User, backref='comments')
     article = ForeignKeyField(Article, backref='comments')

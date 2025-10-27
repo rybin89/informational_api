@@ -4,7 +4,7 @@ from app.Models.Base import *
 
 
 class User(Base):
-    id = IntegerField(primary_key=True)
+    id = PrimaryKeyField()
     username = CharField(unique=True, max_length=50)
     email = CharField(unique=True, max_length=100)
     password_hash = CharField(max_length=255)

@@ -6,7 +6,7 @@ from app.Models.Tag import Tag
 
 
 class ArticleTag(Base):
-    id = IntegerField(primary_key=True)
+    id = PrimaryKeyField()
     article = ForeignKeyField(Article, backref='articletags')
     tag = ForeignKeyField(Tag, backref='articletags')
 

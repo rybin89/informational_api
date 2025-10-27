@@ -10,7 +10,7 @@ class Token(Base):
     user_id = ForeignKeyField(User, backref='users')
     expires_at = DateTimeField()
     created_at = DateTimeField(default=datetime.now)
-    revoked_at = DateTimeField(default=(created_at + timedelta(hours = 24)))
+    revoked_at = DateTimeField(null=True)
     is_revoked = BooleanField(default=False)
 
 

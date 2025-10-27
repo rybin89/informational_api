@@ -3,7 +3,7 @@ from datetime import datetime
 from app.Models.Base import *
 
 class Tag(Base):
-    id = IntegerField(primary_key=True)
+    id = PrimaryKeyField()
     name = CharField(max_length=50)
     slug = CharField(unique=True, max_length=50)
 

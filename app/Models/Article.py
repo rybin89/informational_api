@@ -5,7 +5,7 @@ from app.Models.Users import User
 
 
 class Article(Base):
-    id = IntegerField(primary_key=True)
+    id = PrimaryKeyField()
     title = CharField(max_length=255)
     slug = CharField(unique=True, max_length=255)
     excerpt = TextField(null=True)

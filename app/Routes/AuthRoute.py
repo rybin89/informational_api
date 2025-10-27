@@ -52,7 +52,6 @@ def register(user,token):
             "user": {
                 'username': user.username,
                 'email': user.email,
-
                 'role': user.role,
                 'avatar': user.avatar,
                 'bio': user.bio,
@@ -68,7 +67,7 @@ def register(user,token):
 def login():
     data_user = request.get_json()
     user = UserController.auth(data_user['login'], data_user['password'])
-    print(user)
+
     if user:
         token = TokenController.add(user.id, user.username, user.role)
         return jsonify(
@@ -92,7 +91,7 @@ def login():
 def logout_user(user,token):
 
     TokenController.revoked(token)
-    print(token)
+
     return jsonify(
         {
             "success": True,
@@ -100,3 +99,26 @@ def logout_user(user,token):
         }
     ), 200
 
+@auth_bp.route('/me', methods=['GET'])
+@TokenController.requeired
+def me(user,token):
+    user = UserController.get_user(user['username'])
+    return jsonify(
+            {
+                "success": True,
+                "user": {
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'bio': user.bio,
+                    'avatar': user.avatar,
+                    'role': user.role,
+                    'is_active': user.is_active,
+                    'created_at': user.created_at,
+                    'updated_at': user.updated_at,
+
+                }
+            }
+        ), 200

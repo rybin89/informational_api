@@ -61,7 +61,26 @@ class UserController:
     @classmethod
     def get_user(cls, username):
         return User.get_or_none(User.username == username)
-
+    @classmethod
+    def get(cls):
+        return User.select()
+    @classmethod
+    def show_id(cls, id):
+        return User.get_or_none(id)
+    @classmethod
+    def update(cls, id, **kwargs):
+        if kwargs:
+            if 'password_hash' in kwargs:
+                hash_password = hashpw(kwargs['password_hash'].encode('utf-8'), gensalt()).decode('utf-8')
+                kwargs['password_hash'] = hash_password
+            User.update(**kwargs).where(User.id == id).execute()
+            return User.get_or_none(id)
+        else:
+            return False
+    @classmethod
+    def delete(cls, id):
+        if id != 2: # id админа
+            User.delete().where(User.id == id).execute()
 
 if __name__ == "__main__":
     print(UserController.add(
@@ -76,3 +95,5 @@ if __name__ == "__main__":
     )
     print(u)
     print(UserController.get_user('ivasdffs222'))
+    print(UserController.show_id(2))
+    print(UserController.update(16,username='WWW',email='WWW@WWW.ru'))

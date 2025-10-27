@@ -50,4 +50,33 @@ def get_user(user, token, id):
 @TokenController.requeired
 @TokenController.role_requeired('admin')
 def update_user(user, token, id):
+    data = request.get_json()
+    if data:
 
+        UserController.update(id, **data)
+        user = UserController.show_id(id)
+
+        return jsonify({
+            'access': True,
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'role': user.role,
+                'avatar': user.avatar,
+                'bio': user.bio,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'created_at': user.created_at
+            }
+        }),200
+
+@users_bp.route('/<int:id>', methods=['DELETE'])
+@TokenController.requeired
+@TokenController.role_requeired('admin')
+def delete(user, token, id):
+    UserController.delete(id)
+    return jsonify({
+        'access': True,
+        'message': 'Пользователь удален'
+        }), 200

@@ -27,8 +27,18 @@ class TokenController:
     # Прокси методы
     @classmethod
     def requeired(cls, f):
+
         return jwt_manager.requeired(f)
 
     @classmethod
     def role_requeired(cls, role):
         return jwt_manager.role_requeired(role)
+    # Отозвать токен
+    @classmethod
+    def revoked(cls,token):
+        Token.update(is_revoked=True,revoked_at=datetime.now()).where(Token.token == token).execute()
+
+    @classmethod
+    def show(cls,token):
+        return Token.get_or_none(Token.token == token)
+

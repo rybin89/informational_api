@@ -8,7 +8,7 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 @auth_bp.route('/register', methods=['POST'])
 @TokenController.requeired
 @TokenController.role_requeired('admin')
-def register(user):
+def register(user,token):
     '''
     маршрут для создания пользователей
     :param user:
@@ -42,24 +42,27 @@ def register(user):
             }
 
         ), 422
+    if data_user['role'] == '':
+        data_user['role'] = 'user'
+    user = UserController.get_user(data_user['username'])
     return jsonify(
         {
             "success": True,
             "message": "Пользователь создан",
             "user": {
-                'username': data_user['username'],
-                'email': data_user['email'],
-                'password_hash': data_user['password_hash'],
-                'role': data_user['role'],
-                'avatar': data_user['avatar'],
-                'bio': data_user['bio'],
-                'first_name': data_user['first_name'],
-                'last_name': data_user['last_name']
+                'username': user.username,
+                'email': user.email,
+
+                'role': user.role,
+                'avatar': user.avatar,
+                'bio': user.bio,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'created_at': user.created_at
             }
 
         }
     ),201
-
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
@@ -83,3 +86,17 @@ def login():
             "error": "Неверный логин или пароль"
         }
     ), 401
+
+@auth_bp.route('/logout', methods=['POST'])
+@TokenController.requeired
+def logout_user(user,token):
+
+    TokenController.revoked(token)
+    print(token)
+    return jsonify(
+        {
+            "success": True,
+            "error": "Успешный выход из системы"
+        }
+    ), 200
+

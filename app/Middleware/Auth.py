@@ -5,6 +5,8 @@ import jwt
 from flask import request,jsonify
 
 
+
+
 class JWTManger:
     def __init__(self, secret_key,algorithm ='HS256'):
         self.secret_key = secret_key
@@ -32,6 +34,7 @@ class JWTManger:
     def requeired(self,f):
         @wraps(f)
         def decorated(*args,**kwargs):
+            from app.Contollers.TokenController import TokenController
             auth_token = request.headers.get('Authorization')
             if not auth_token or not auth_token.startswith('Bearer '):
                 return jsonify(
@@ -42,15 +45,18 @@ class JWTManger:
                 ),401
             token = auth_token[7:] # Убираем первые 7 символов ('Bearer ')
             # это токен проверить на is_revoked и expires_at
+            is_revoked = TokenController.show(token).is_revoked
+
             payload = self.verifi_token(token)
-            if not payload:
+            print(is_revoked)
+            if not payload or is_revoked:
                 return jsonify(
                     {
                         'access': False,
                         'error': 'Токен недействительный или просроченый'
                     }
                 ),401
-            return f(*args,**kwargs,user = payload)
+            return f(*args,**kwargs,user = payload,token = token)
         return decorated
     def role_requeired(self,role):
         def decorator(f):

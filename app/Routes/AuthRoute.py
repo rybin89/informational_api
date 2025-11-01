@@ -23,6 +23,14 @@ def register(user,token):
              bio
     '''
     data_user = request.get_json()
+    if data_user is None:
+        return jsonify(
+            {
+                "success": False,
+                "error": "нет данных"
+            }
+
+        ), 422
 
     new_user = UserController.add(
         data_user['username'],

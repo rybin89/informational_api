@@ -32,10 +32,7 @@ class CategoryController:
     def show_slug(cls, slug):
         return Category.get_or_none(Category.slug == slug)
 
-    @classmethod
-    def get_articles(cls, slug):
-        category = cls.show_slug(slug)
-        return ArticleController.show_category(category.id)
+
 
 
 

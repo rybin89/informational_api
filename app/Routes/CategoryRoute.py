@@ -1,6 +1,7 @@
 import peewee
 from flask import Blueprint, Flask, jsonify, request
 
+from app.Contollers.ArticleController import ArticleController
 from app.Contollers.CategoryController import CategoryController
 from app.Contollers.TokenController import TokenController
 
@@ -197,7 +198,7 @@ def update(id, user, token):
 @category_bp.route('/<slug>/articles')
 def articles(slug):
     category = CategoryController.show_slug(slug)
-    articles = CategoryController.get_articles(slug)
+    articles = ArticleController.show_category(category.id)
     list = []
     for article in articles:
         if article:
@@ -220,7 +221,7 @@ def articles(slug):
     return jsonify(
         {
             "success": True,
-            "message": f"Категория {category.name} измениена",
+            "message": f"Статьи категории '{category.name}'",
             'articles': list
 
         }

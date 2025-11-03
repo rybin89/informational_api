@@ -134,7 +134,6 @@ def delete(id,user,token):
 
 @category_bp.route('/<int:id>',methods=['PUT'])
 @TokenController.requeired
-
 def update(id,user,token):
     if user['role'] == 'admin' or user['role'] == 'editor':
         try:

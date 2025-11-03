@@ -4,9 +4,6 @@ from functools import wraps
 import jwt
 from flask import request,jsonify
 
-
-
-
 class JWTManger:
     def __init__(self, secret_key,algorithm ='HS256'):
         self.secret_key = secret_key

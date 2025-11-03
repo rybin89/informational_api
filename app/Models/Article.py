@@ -8,11 +8,11 @@ class Article(Base):
     id = PrimaryKeyField()
     title = CharField(max_length=255)
     slug = CharField(unique=True, max_length=255)
-    excerpt = TextField(null=True)
+    excerpt = TextField(null=True) # краткое содержание
     content = TextField()
-    featured_image = CharField(max_length=255, null=True)
+    featured_image = CharField(max_length=255, null=True) # путь к изображению
     status = CharField(choices=['draft', 'published', 'archived'], default='draft')
-    views = IntegerField(default=0)
+    views = IntegerField(default=0) # количество просмотров
     reading_time = IntegerField(default=0)  # в минутах
     author = ForeignKeyField(User, backref='articles')
     category = ForeignKeyField(Category, backref='articles', null=True)

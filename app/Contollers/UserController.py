@@ -84,10 +84,10 @@ class UserController:
 
 if __name__ == "__main__":
     print(UserController.add(
-        username='admasdsdfsdfasin22',
-        email='sdf@admin222.ru',
-        password_hash='adasdmin',
-        role='dsf',
+        username='author',
+        email='author@author.ru',
+        password_hash='author',
+        role='author',
     ))
     u = UserController.auth(
         login='admin',

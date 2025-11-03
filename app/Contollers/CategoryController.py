@@ -1,5 +1,7 @@
+from app.Contollers.ArticleController import ArticleController
 from app.Models.Category import Category
-from transliterate import  translit
+from transliterate import translit
+
 
 class CategoryController:
 
@@ -8,28 +10,38 @@ class CategoryController:
         return Category.select()
 
     @classmethod
-    def add(cls,name,description,parent = None):
-        slug =translit(name, 'ru',reversed=True)
-        slug = slug.lower().replace(' ','_')
-        Category.create(name=name,slug=slug,description=description,parent=parent)
+    def add(cls, name, description, parent=None):
+        slug = translit(name, 'ru', reversed=True)
+        slug = slug.lower().replace(' ', '_')
+        Category.create(name=name, slug=slug, description=description, parent=parent)
 
     @classmethod
-    def show(cls,id):
+    def show(cls, id):
         return Category.get_or_none(id)
+
     @classmethod
-    def update(cls,id,**kwargs):
+    def update(cls, id, **kwargs):
         for key, value in kwargs.items():
             Category.update({key: value}).where(Category.id == id).execute()
+
     @classmethod
-    def delete(cls,id):
+    def delete(cls, id):
         Category.delete().where(Category.id == id).execute()
 
     @classmethod
-    def show_slug(cls,slug):
+    def show_slug(cls, slug):
         return Category.get_or_none(Category.slug == slug)
+
+    @classmethod
+    def get_articles(cls, slug):
+        category = cls.show_slug(slug)
+        return ArticleController.show_category(category.id)
+
+
+
 if __name__ == "__main__":
     # for row in CategoryController.get():
-    #     print(row)
+    #     print(row.name, row.articles)
     #
     # CategoryController.add(
     #     'Браузерные Игры',
@@ -39,7 +51,7 @@ if __name__ == "__main__":
     # )
     # CategoryController.delete(4)
     # CategoryController.update(1,name = 'Программное обеспечение')
-    for row in CategoryController.get():
-        print(row.name, type(row.parent))
-    print('По slug',CategoryController.show_slug('games'))
-
+    # for row in CategoryController.get():
+    #     print(row.name, type(row.parent))
+    # print('По slug',CategoryController.show_slug('games'))
+    print(CategoryController.get_articles('os'))

@@ -26,6 +26,9 @@ class ArticleController:
     def show_slug(cls, slug):
         return Article.get_or_none(slug=slug)
 
+    @classmethod
+    def show_category(cls, category_id):
+        return Article.select().where(Article.category == category_id)
 
 
 if __name__ == '__main__':

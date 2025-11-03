@@ -4,33 +4,36 @@ from flask import Blueprint, Flask, jsonify, request
 from app.Contollers.CategoryController import CategoryController
 from app.Contollers.TokenController import TokenController
 
-category_bp = Blueprint('categories',__name__,url_prefix='/api/categories')
+category_bp = Blueprint('categories', __name__, url_prefix='/api/categories')
 
-@category_bp.route('/',methods=['GET'])
+
+@category_bp.route('/', methods=['GET'])
 def categories():
     list_categories = CategoryController.get()
     list = []
     for cat in list_categories:
         if cat.parent is None:
-            parent ='Нет родителя'
+            parent = 'Нет родителя'
         else:
             parent = cat.parent.name
         if cat.children is None:
             children = []
         else:
-            children = [{'name':row.name} for row in cat.children]
+            children = [{'name': row.name} for row in cat.children]
         list.append({
             'id': cat.id,
-            'name' : cat.name,
-            'slug' : cat.slug,
-            'description' : cat.description,
-            'parent' : parent,
-            'is_active' : cat.is_active,
-            'created_at' : cat.created_at,
-            'children' : children
+            'name': cat.name,
+            'slug': cat.slug,
+            'description': cat.description,
+            'parent': parent,
+            'is_active': cat.is_active,
+            'created_at': cat.created_at,
+            'children': children
 
         })
     return jsonify(list), 200
+
+
 @category_bp.route('/<slug>')
 def slug(slug):
     slug = CategoryController.show_slug(slug)
@@ -38,10 +41,10 @@ def slug(slug):
         return jsonify(
             {
                 'success': False,
-                'error' : "Нет такой категории"
-             }
+                'error': "Нет такой категории"
+            }
 
-        ),404
+        ), 404
     if slug.parent is None:
         parent = 'Нет родителя'
     else:
@@ -52,7 +55,7 @@ def slug(slug):
         children = [{'name': row.name} for row in slug.children]
     return jsonify(
         {
-            'id':slug.id,
+            'id': slug.id,
             'name': slug.name,
             'slug': slug.slug,
             'description': slug.description,
@@ -61,12 +64,12 @@ def slug(slug):
             'created_at': slug.created_at,
             'children': children
         }
-    ),200
+    ), 200
 
-@category_bp.route('/',methods=['POST'])
+
+@category_bp.route('/', methods=['POST'])
 @TokenController.requeired
-
-def add_category(user,token):
+def add_category(user, token):
     if user['role'] == 'admin' or user['role'] == 'editor':
         try:
             if not request.is_json:
@@ -90,13 +93,13 @@ def add_category(user,token):
             parent = category_data['parent']
             if parent is None:
                 parent = ''
-            CategoryController.add(name,description,parent)
+            CategoryController.add(name, description, parent)
             return jsonify(
                 {
                     "success": True,
-                    "message" : f"Категория {name} добавлена"
+                    "message": f"Категория {name} добавлена"
                 }
-            ),201
+            ), 201
         except TypeError as error:
             return jsonify(
                 {
@@ -111,10 +114,12 @@ def add_category(user,token):
                     "error": f"{error}"
                 }
             ), 422
+
+
 @category_bp.route("/<int:id>", methods=['DELETE'])
 @TokenController.requeired
 @TokenController.role_requeired('admin')
-def delete(id,user,token):
+def delete(id, user, token):
     try:
         category = CategoryController.show(id)
         CategoryController.delete(id)
@@ -132,9 +137,10 @@ def delete(id,user,token):
             }
         ), 422
 
-@category_bp.route('/<int:id>',methods=['PUT'])
+
+@category_bp.route('/<int:id>', methods=['PUT'])
 @TokenController.requeired
-def update(id,user,token):
+def update(id, user, token):
     if user['role'] == 'admin' or user['role'] == 'editor':
         try:
             if not request.is_json:
@@ -153,28 +159,25 @@ def update(id,user,token):
                     }
                 ), 422
 
-            CategoryController.update(id , **category_data)
+            CategoryController.update(id, **category_data)
             category = CategoryController.show(id)
-
-
 
             return jsonify(
                 {
                     "success": True,
-                    "message" : f"Категория {category.name} измениена",
-                    'category' : {
+                    "message": f"Категория {category.name} измениена",
+                    'category': {
                         'id': category.id,
                         'name': category.name,
                         'slug': category.slug,
                         'description': category.description,
-                       'is_active': category.is_active,
+                        'is_active': category.is_active,
                         'created_at': category.created_at,
-
 
                     }
 
                 }
-            ),201
+            ), 201
         except TypeError as error:
             return jsonify(
                 {
@@ -189,3 +192,36 @@ def update(id,user,token):
                     "error": f"{error}"
                 }
             ), 422
+
+
+@category_bp.route('/<slug>/articles')
+def articles(slug):
+    category = CategoryController.show_slug(slug)
+    articles = CategoryController.get_articles(slug)
+    list = []
+    for article in articles:
+        if article:
+            list.append({
+                'id': article.id,
+                'title': article.title,
+                'slug': article.slug,
+                'excerpt': article.excerpt,
+                'content': article.content,
+                'featured_image': article.featured_image,
+                'status': article.status,
+                'views': article.views,
+                'reading_time': article.reading_time,
+                'author': article.author.username,
+                'category': article.category.name,
+                'published_at': article.published_at,
+                'created_at': article.created_at,
+                'updated_at': article.updated_at,
+            })
+    return jsonify(
+        {
+            "success": True,
+            "message": f"Категория {category.name} измениена",
+            'articles': list
+
+        }
+    ), 200

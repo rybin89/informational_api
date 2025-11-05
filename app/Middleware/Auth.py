@@ -45,7 +45,6 @@ class JWTManger:
             is_revoked = TokenController.show(token).is_revoked
 
             payload = self.verifi_token(token)
-            print(is_revoked)
             if not payload or is_revoked:
                 return jsonify(
                     {

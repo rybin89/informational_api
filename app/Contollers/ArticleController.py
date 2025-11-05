@@ -29,8 +29,16 @@ class ArticleController:
     @classmethod
     def show_category(cls, category_id):
         return Article.select().where(Article.category == category_id)
+    @classmethod
+    def show(cls,id):
+        return Article.get_or_none(id)
 
-
+    @classmethod
+    def update(cls,id,**filds):
+        Article.update(**filds).where(Article.id == id).execute()
+    @classmethod
+    def delete(cls,id):
+        Article.delete_by_id(id)
 if __name__ == '__main__':
 
    #  str = '''
@@ -43,6 +51,4 @@ if __name__ == '__main__':
    #      category=1
    #
    #  )
-    for article in ArticleController.get():
-        print(type(article.author.username))
-    print(ArticleController.show_slug('windows'))
+   print(ArticleController.show(2).author.id)
